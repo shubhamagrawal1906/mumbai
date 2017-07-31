@@ -27,4 +27,5 @@
     <label><input type="checkbox" name="is_admin" id="is_admin" ng-model="is_admin"> Is Admin</label>
   </div>
   <button type="submit" ng-disabled="signupForm.username.$invalid || signupForm.email.$invalid || signupForm.password.$invalid" class="btn btn-default" ng-click="submitForm()">Submit</button>
+  <a ng-href="#!/login/"><button type="button" class="btn btn-default">Log in</button></a>
 </form>

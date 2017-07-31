@@ -49,7 +49,7 @@ app.factory("services", ["$http",
 
   function($http){
     // var socket = "http://127.0.0.1:3000";
-    var socket = "http://52.221.212.105";
+    var socket = "http://52.221.212.105:3000";
     // $http.defaults.headers.common.Content-Type = 'application/json';
     var obj = {};
       obj.signup = function(data){

@@ -9,6 +9,6 @@ app.use('/json',express.static(path.join(__dirname,'json')));
 app.get('/',function(req,res){
   res.sendFile(path.join( __dirname, 'index.html'));
 });
-app.listen('8080', function(){
+app.listen('8080', '0.0.0.0', 571, function(){
   console.log("The http://127.0.0.1:8080/ is listening");
 });

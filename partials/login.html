@@ -18,4 +18,5 @@
     <span ng-show="loginForm.password.$invalid && loginForm.password.$touched">Password required.</span>
   </div>
   <button type="submit" ng-disabled="loginForm.username.$invalid || loginForm.password.$invalid" class="btn btn-default" ng-click="submitForm()">Submit</button>
+  <a ng-href="#!/signup/"><button type="button" class="btn btn-default">Sign up</button></a>
 </form>
