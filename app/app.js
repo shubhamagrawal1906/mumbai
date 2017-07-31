@@ -119,17 +119,18 @@ var isLoggedin = function() {
   return false;
 }
 
-var loggedinUser = function() {
+var loggedinUser = function($location) {
   if(isLoggedin()){
     return angular.fromJson(window.localStorage['user']);
   }
-  // console.log("error");
-  //$location('/login/');
-  // console.log("error1")
+  $location.path('/login/');
   return {};
 }
 
 app.controller('signupController', function($scope, $location, services) {
+  if(isLoggedin()){
+    $location.path('/task/');
+  }
   $scope.removeAlert = function(){
     $scope.success = '';
     $scope.error = '';
@@ -150,6 +151,7 @@ app.controller('signupController', function($scope, $location, services) {
     }
     services.signup(data).then(function(data){
       $scope.success = data.data.message;
+      $location.path('/login/');
     },function(err){
       $scope.error = err.data.message;
     });
@@ -158,6 +160,9 @@ app.controller('signupController', function($scope, $location, services) {
 });
 
 app.controller('loginController', function($scope, $location, services) {
+  if(isLoggedin()){
+    $location.path('/task/');
+  }
   $scope.removeAlert = function(){
     $scope.success = '';
     $scope.error = '';
@@ -175,7 +180,7 @@ app.controller('loginController', function($scope, $location, services) {
       }else{
         window.localStorage['user'] = angular.toJson(data.data.data);
         $scope.success = data.data.message;
-
+        $location.path('/task/');
       }
     },function(err){
       $scope.error = err.data.message;
@@ -191,7 +196,7 @@ app.controller('stageCreateController', function($scope, $location, services) {
   }
   $scope.removeAlert();
   $scope.isLoader = true;
-  var user = loggedinUser();
+  var user = loggedinUser($location);
   $scope.submitForm = function() {
     var data = {
       "task_sequence":$scope.stagesequence,
@@ -214,8 +219,8 @@ app.controller('stageAllController', function($scope, $location, services) {
   }
   $scope.removeAlert();
   $scope.isLoader = true;
+  var user = loggedinUser($location);
   $scope.updatedValue = '';
-  var user = loggedinUser();
   var data = {
     "user_id":user.user_id
   }
@@ -272,6 +277,7 @@ app.controller('stageAllController', function($scope, $location, services) {
       }else{
         localStorage.removeItem('user');
         $scope.success = data.data.message;
+        $location.path('/login/');
       }
     },function(err){
       $scope.error = err.data.message;
@@ -287,7 +293,7 @@ app.controller('taskCreateController', function($scope, $location, services) {
   }
   $scope.removeAlert();
   $scope.isLoader = true;
-  var user = loggedinUser();
+  var user = loggedinUser($location);
   services.users({"user_id":user.user_id}).then(function(data){
     $scope.users = data.data.data;
     $scope.selectedUser = $scope.users[0];
@@ -313,14 +319,10 @@ app.controller('taskCreateController', function($scope, $location, services) {
     	"stage_id":$scope.selectedStage._id,
     	"assigned_user_id":$scope.selectedUser._id
     }
-    // console.log(data);
     services.createtask(data).then(function(data){
-      // console.log(data.data);
       $scope.success = data.data.message;
-
     },function(err){
       $scope.error = err.data.message;
-      // console.log(data)
     });
     $scope.isLoader = false;
   }
@@ -333,7 +335,7 @@ app.controller('taskController', function($scope, $location, services) {
   }
   $scope.removeAlert();
   $scope.isLoader = true;
-  var user = loggedinUser();
+  var user = loggedinUser($location);
   services.getallstage({"user_id":user.user_id}).then(function(data){
     $scope.stages = data.data.data;
     $scope.success = data.data.message;
@@ -345,7 +347,6 @@ app.controller('taskController', function($scope, $location, services) {
       services.getalltasks({"user_id":user.user_id}).then(function(data){
         $scope.tasks = data.data.data[0];
         $scope.success = data.data.message;
-        console.log($scope.tasks);
       },function(err){
         $scope.error = err.data.message;
       });
@@ -377,7 +378,6 @@ app.controller('taskController', function($scope, $location, services) {
     services.changetaskstage(data).then(function(data){
       getTasks();
       $scope.success = data.data.message;
-      console.log($scope.success);
     },function(err){
       getTasks();
       $scope.error = err.data.message;
@@ -408,7 +408,7 @@ app.controller('subtaskCreateController', function($scope, $location, services) 
   }
   $scope.removeAlert();
   $scope.isLoader = true;
-  var user = loggedinUser();
+  var user = loggedinUser($location);
   services.getalltasks({"user_id":user.user_id}).then(function(data){
     $scope.tasks = data.data.data[0];
     $scope.selectedTask = $scope.tasks[0];
@@ -456,9 +456,9 @@ app.controller('subtaskController', function($scope, $location, $routeParams, se
     $scope.error = '';
   }
   $scope.removeAlert();
-  var task_id = $routeParams.task_id;
   $scope.isLoader = true;
-  var user = loggedinUser();
+  var user = loggedinUser($location);
+  var task_id = $routeParams.task_id;
   services.getallstage({"user_id":user.user_id}).then(function(data){
     $scope.stages = data.data.data;
     $scope.success = data.data.message;
@@ -524,7 +524,7 @@ app.controller('taskhistoryController', function($scope, $location, $routeParams
   $scope.removeAlert();
   var task_id = $routeParams.task_id;
   $scope.isLoader = true;
-  var user = loggedinUser();
+  var user = loggedinUser($location);
   var getTaskHistory = function(){
     services.fetchtaskhistories({"task_id":task_id,"user_id":user.user_id}).then(function(data){
       $scope.histories = data.data.data;
