@@ -346,6 +346,11 @@ app.controller('taskController', function($scope, $location, services) {
     if(user["user_type"] == "admin"){
       services.getalltasks({"user_id":user.user_id}).then(function(data){
         $scope.tasks = data.data.data[0];
+        for(var i = 0;i<$scope.tasks.length; i++){
+          if('parent_id' in $scope.tasks[i]){
+            $scope.tasks.splice(i, 1);
+          }
+        }
         $scope.success = data.data.message;
       },function(err){
         $scope.error = err.data.message;
@@ -395,6 +400,19 @@ app.controller('taskController', function($scope, $location, services) {
       $scope.success = data.data.message;
     },function(err){
       getTasks();
+      $scope.error = err.data.message;
+    });
+  }
+  $scope.logout = function(){
+    services.logout({"user_id":user.user_id}).then(function(data){
+      if(!isLoggedin()){
+        $scope.error = "Already logged out.";
+      }else{
+        localStorage.removeItem('user');
+        $scope.success = data.data.message;
+        $location.path('/login/');
+      }
+    },function(err){
       $scope.error = err.data.message;
     });
   }
@@ -469,6 +487,12 @@ app.controller('subtaskController', function($scope, $location, $routeParams, se
     services.getallchild({"task_id":task_id}).then(function(data){
       $scope.tasks = data.data.data;
       $scope.success = data.data.message;
+      for(var i = 0;i<$scope.tasks.length; i++){
+        if(!('parent_id' in $scope.tasks[i])){
+          $scope.tasks.splice(i, 1);
+        }
+      }
+      $scope.success = data.data.message;
     },function(err){
       $scope.error = err.data.message;
     });
@@ -512,6 +536,19 @@ app.controller('subtaskController', function($scope, $location, $routeParams, se
       getSubtasks();
     });
 
+  }
+  $scope.logout = function(){
+    services.logout({"user_id":user.user_id}).then(function(data){
+      if(!isLoggedin()){
+        $scope.error = "Already logged out.";
+      }else{
+        localStorage.removeItem('user');
+        $scope.success = data.data.message;
+        $location.path('/login/');
+      }
+    },function(err){
+      $scope.error = err.data.message;
+    });
   }
   $scope.isLoader = false;
 });
