@@ -429,6 +429,11 @@ app.controller('subtaskCreateController', function($scope, $location, services) 
   var user = loggedinUser($location);
   services.getalltasks({"user_id":user.user_id}).then(function(data){
     $scope.tasks = data.data.data[0];
+    for(var i = 0;i<$scope.tasks.length; i++){
+      if('parent_id' in $scope.tasks[i]){
+        $scope.tasks.splice(i, 1);
+      }
+    }
     $scope.selectedTask = $scope.tasks[0];
     // $scope.success = data.data.message;
   },function(err){
